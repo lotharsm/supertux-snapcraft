@@ -1,0 +1,99 @@
+name: supertux
+base: core18
+license: GPL-2.0
+adopt-info: supertux
+summary: SuperTux
+description: |
+    SuperTux is a jump'n'run game with strong inspiration from the Super Mario Bros. games for the various Nintendo platforms.
+
+    Run and jump through multiple worlds, fighting off enemies by jumping on them, bumping them from below or tossing objects at them, grabbing power-ups and other stuff on the way.
+confinement: strict
+grade: stable
+
+apps:
+  supertux:
+    command: desktop-launch $SNAP/usr/bin/supertux2
+    plugs:
+      - x11
+      - wayland
+      - unity7
+      - opengl
+      - audio-playback
+      - home
+      - network
+
+parts:
+  supertux:
+    # Note: We can't use the cmake plugin for now, since it breaks the external libs
+    # like tinygettext and most likely other dependencies as well. Path issues?.
+    # Fortunately, we can use the autotools wrapper the SuperTux developers provide.
+    # This wrapper still uses cmake as "backend", but this way of manually
+    # generating the Makefiles works.
+    plugin: nil
+    after: [desktop-glib-only]
+    source: https://github.com/supertux/supertux.git
+    override-build: |
+      last_committed_tag="$(git tag --list | tac | head -n1)"
+      trimmed_tag="$(echo $last_committed_tag | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')"
+      last_released_tag="$(snap info supertux | awk '$1 == "beta:" { print $2 }')"
+      # If the latest tag from the upstream project has not been released to
+      # beta, build that tag instead of master.
+      if [ "${trimmed_tag}" != "${last_released_tag}" ]; then
+        git fetch
+        git checkout "${last_committed_tag}"
+        snapcraftctl set-version $(git -C ../src tag --list | tac | head -n1 | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')
+      else
+        snapcraftctl set-version "git"
+      fi
+      ./configure -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RELEASE
+      cd build
+      make -j$(nproc)
+      make install
+      snapcraftctl build
+
+    build-packages:
+      - g++
+      - cmake
+      - build-essential
+      - libsdl2-dev
+      - libsdl2-image-dev
+      - libogg-dev
+      - libvorbis-dev
+      - libopenal-dev
+      - libglew-dev
+      - libboost-all-dev
+      - libcurl4-openssl-dev
+      - libfreetype6-dev
+      - libraqm-dev
+      - libfribidi-dev
+      - libphysfs-dev
+    stage-packages:
+      - libstdc++6
+      - libgl1-mesa-dri
+      - libgl1-mesa-glx
+      - libglu1-mesa
+      - libwayland-egl1-mesa
+      - libsdl2-2.0-0
+      - libsdl2-image-2.0-0
+      - libopenal1
+      - libglew2.0
+      - libvorbis0a
+      - libvorbisfile3
+      - libdbusmenu-glib4
+      - libunity-protocol-private0
+      - libunity9
+      - libcurl4
+      - libfreetype6
+      - libraqm0
+      - libfribidi0
+      - libphysfs1
+
+  desktop-glib-only:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: glib-only
+    plugin: make
+    build-packages:
+      - libglib2.0-dev
+    stage-packages:
+      - libglib2.0-bin
+
