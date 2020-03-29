@@ -45,7 +45,7 @@ parts:
       else
         snapcraftctl set-version "git"
       fi
-      ./configure -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RELEASE
+      ./configure -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=$SNAPCRAFT_PART_INSTALL/usr
       cd build
       make -j$(nproc)
       make install
