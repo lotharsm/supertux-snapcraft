@@ -27,8 +27,11 @@ parts:
     # Note: We can't use the cmake plugin for now, since it breaks the external libs
     # like tinygettext and most likely other dependencies as well. Path issues?.
     # Fortunately, we can use the autotools wrapper the SuperTux developers provide.
-    # This wrapper still uses cmake as "backend", but this way of manually
-    # generating the Makefiles works.
+    #
+    # This wrapper simply calls cmake itself, but in this case,
+    # we don't run into any path issues. However, we could execute
+    # the cmake commands manually, but since the wrapper is already there...
+    
     plugin: nil
     after: [desktop-glib-only]
     source: https://github.com/supertux/supertux.git
@@ -70,6 +73,7 @@ parts:
       - libraqm-dev
       - libfribidi-dev
       - libphysfs-dev
+      - libharfbuzz-dev
     stage-packages:
       - libstdc++6
       - libgl1-mesa-dri
@@ -95,6 +99,7 @@ parts:
       - libboost-system1.65.1
       - libboost-thread1.65.1
       - locales-all
+      - libharfbuzz-bin
 
   desktop-glib-only:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
