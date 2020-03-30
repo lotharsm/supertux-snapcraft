@@ -1,6 +1,6 @@
 name: supertux
 base: core18
-license: GPL-2.0
+license: GPL-3
 adopt-info: supertux
 summary: SuperTux
 description: |
