@@ -10,6 +10,13 @@ description: |
 confinement: strict
 grade: stable
 
+architectures:
+  - build-on: i386
+  - build-on: amd64
+  - build-on: armhf
+  - build-on: arm64
+  - build-on: ppc64el
+
 apps:
   supertux:
     command: desktop-launch $SNAP/usr/games/supertux2
@@ -19,6 +26,7 @@ apps:
       - unity7
       - opengl
       - audio-playback
+      - joystick
       - home
       - network
 
