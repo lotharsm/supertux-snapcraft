@@ -44,7 +44,7 @@ parts:
     after: [desktop-glib-only]
     source: https://github.com/supertux/supertux.git
     override-build: |
-      last_committed_tag="$(git tag --list | tac | head -n1)"
+      last_committed_tag="$(git describe --tags `git rev-list --tags --max-count=1`)"
       trimmed_tag="$(echo $last_committed_tag | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')"
       last_released_tag="$(snap info supertux | awk '$1 == "latest/beta:" { print $2 }')"
       # If the latest tag from the upstream project has not been released to
@@ -52,7 +52,7 @@ parts:
       if [ "${trimmed_tag}" != "${last_released_tag}" ]; then
         git fetch
         git checkout "${last_committed_tag}"
-        snapcraftctl set-version $(git -C ../src tag --list | tac | head -n1 | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')
+        snapcraftctl set-version $(git -C ../src describe --tags `git rev-list --tags --max-count=1` | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')
       else
         snapcraftctl set-version "git"
       fi
