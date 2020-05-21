@@ -30,6 +30,9 @@ apps:
       - home
       - network
 
+    environment:
+      DBUS_FATAL_WARNINGS: 0
+
 parts:
   supertux:
     # Note: We can't use the cmake plugin for now, since it breaks the external libs
