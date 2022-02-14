@@ -10,6 +10,13 @@ description: |
 confinement: strict
 grade: stable
 
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: armhf
+  - build-on: ppc64el
+  - build-on: s390x
+
 apps:
   supertux:
     command: bin/desktop-launch $SNAP/usr/games/supertux2
