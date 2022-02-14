@@ -85,6 +85,7 @@ parts:
       - libfribidi-dev
       - libphysfs-dev
       - libharfbuzz-dev
+      - libglm-dev
     stage-packages:
       - libstdc++6
       - libgl1-mesa-dri
